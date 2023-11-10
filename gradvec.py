@@ -56,13 +56,13 @@ class StateVector:
     def probs(self) -> torch.Tensor:
         return torch.abs(self.state).real ** 2
 
-    def measure(self, observable=None):
+    def measure(self, observable=None) -> torch.Tensor:
         if observable is None:
             return self.probs()
         else:
             pass
     
-    def CNOT(self, wires=None):
+    def CNOT(self, wires=None) -> None:
         if wires is None:
             for i in range(self.n_qubits):
                 self.CNOT([i,(i + 1) % self.n_qubits])
@@ -71,7 +71,7 @@ class StateVector:
             cnot[0,0] = cnot[1,1] = cnot[2,3] = cnot[3,2] = 1
             self.apply_2q_gate(cnot,wires)
     
-    def Hadamard(self, wires=None):
+    def Hadamard(self, wires=None) -> None:
         if wires is None:
             wires = range(self.n_qubits)
 
@@ -82,7 +82,7 @@ class StateVector:
             h = torch.tensor([[1,1],[1,-1]], dtype=torch.cfloat)  / torch.sqrt(torch.tensor(2))
             self.apply_1q_gate(h,wires)
 
-    def RZ(self, theta, wires=None):
+    def RZ(self, theta, wires=None) -> None:
         if wires is None:
             wires = range(self.n_qubits)
 
@@ -98,12 +98,12 @@ class StateVector:
             rz = torch.tensor([[e,0],[0,e.conj()]], dtype=torch.cfloat)
             self.apply_1q_gate(rz,wires)
 
-    def RX(self, theta, wires=None):
+    def RX(self, theta, wires=None) -> None:
         self.Hadamard(wires=wires)
         self.RZ(theta, wires)
         self.Hadamard(wires=wires)
 
-    def RY(self, theta, wires=None):
+    def RY(self, theta, wires=None) -> None:
         self.RZ(torch.pi/2, wires=wires)
         self.RX(theta, wires)
         self.RZ(-torch.pi/2, wires=wires)
